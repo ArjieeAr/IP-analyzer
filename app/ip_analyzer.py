@@ -46,7 +46,7 @@ def get_ip_info():
         ip (str): The IP address to look up.
     
     Returns:
-        dict: A dictionary containing location, ISP, ASN, and timezone information.
+        dict A dictionary containing location, ISP, ASN, and timezone information.
     """
     try:
         response = requests.get("https://ipapi.co/json/", timeout=5)
