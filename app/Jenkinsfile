@@ -1,1 +1,69 @@
+pipeline {
+    agent any
+
+    environment {
+        PYTHON = "/usr/bin/python3"
+    }
+
+    stages {
+
+        stage('Clone Repository') {
+            steps {
+                git branch: 'main', url: 'https://github.com/your/repo.git'
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                sh '''
+                ${PYTHON} -m pip install --upgrade pip
+                pip install -r requirements.txt
+                pip install pytest
+                '''
+            }
+        }
+
+        stage('Run Automated Tests') {
+            steps {
+                sh '''
+                echo "Running UI tests..."
+                pytest tests/test_ui.py
+
+                echo "Running Copy/Paste feature tests..."
+                pytest tests/test_copy.py
+                '''
+            }
+        }
+
+        stage('Build Application') {
+            steps {
+                sh '''
+                echo "Building Python project..."
+                ${PYTHON} -m compileall app/
+                '''
+            }
+        }
+
+        stage('Deploy to Local Server') {
+            steps {
+                sh '''
+                echo "Deploying to local server..."
+                ./deploy.sh
+                '''
+            }
+        }
+    }
+
+    post {
+        always {
+            echo "Pipeline execution complete."
+        }
+        failure {
+            echo "Build failed!"
+        }
+        success {
+            echo "Deployment successful!"
+        }
+    }
+}
 
